@@ -1,0 +1,18 @@
+{
+    "name": "tyaga/gamestat.loc",
+    "authors": [
+        {
+            "name": "Alexey Tyagunov",
+            "email": "atyaga@gmail.com"
+        }
+    ],
+    "require": {
+		"silex/silex": "1.0.*@dev",
+		"twig/twig": "dev-master",
+		"doctrine/mongodb-odm": "1.0.*@dev",
+		"neutron/mongo-odm-silex-provider": "0.1.1"
+    },
+	"autoload": {
+		"psr-0": { "": "src/" }
+	}
+}
