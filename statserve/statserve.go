@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
 	"log"
@@ -64,7 +65,15 @@ func main() {
 
 	// listen and serve and handle
 	http.HandleFunc("/stat", func(w http.ResponseWriter, r *http.Request) {
-		stat := NewHashFromRawQuery(&r.URL.RawQuery)
+		var body string
+		if r.Method == "POST" {
+			body_r, _ := ioutil.ReadAll(r.Body)
+			body = string(body_r)
+		} else {
+			body = r.URL.RawQuery
+		}
+
+		stat := NewHashFromRawQuery(&body)
 		LOG("Got stat: ", *stat)
 
 		chanPrepare <- stat

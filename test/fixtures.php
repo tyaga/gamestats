@@ -1,5 +1,10 @@
 <?
-
+/*
+db.games.insert({name:"test1", "game_id":1, "secret":"fd4efrbtes"})
+db.games.insert({name:"test2", "game_id":2, "secret":"ioyukj78j"})
+db.games.insert({name:"test3", "game_id":3, "secret":"ioyukj78j"})
+ *
+ * */
 define('STAT_URL', 'http://localhost:9090/stat');
 define('STAT_COUNT', 5);
 
@@ -34,13 +39,12 @@ for ($i = 0; $i < STAT_COUNT; $i++) {
 }
 
 function post_request($url, $params, $secret) {
-	$params = array( 'http' => array(
+	$post_params = array( 'http' => array(
 		'method' => 'POST', 'content' => sign_request($params, $secret)
 	));
-	$ctx = stream_context_create($params);
+	$ctx = stream_context_create($post_params);
 	$fp = @fopen($url, 'rb', false, $ctx);
-	$response = @stream_get_contents($fp);
-	return $response;
+	return @stream_get_contents($fp);
 }
 
 function post_async_request($url, $params, $secret) {
@@ -52,20 +56,18 @@ function post_async_request($url, $params, $secret) {
 	$out.= "Content-Type: application/x-www-form-urlencoded\r\n";
 	$out.= "Content-Length: ".strlen($post_string)."\r\n";
 	$out.= "Connection: Close\r\n\r\n";
-	if (isset($post_string)) $out.= $post_string;
-
+	if ($post_string) $out.= $post_string;
 	fwrite($fp, $out);
 	fclose($fp);
 }
 
 function sign_request($params, $secret) {
 	$post_params = array();
-	foreach ($params as $key => &$val) {
+	ksort($params);
+	foreach ($params as $key => $val) {
 		if (is_array($val)) $val = implode(',', $val);
 		$post_params[] = $key.'='.urlencode($val);
 	}
-	$post_params['sig'] = md5(implode('', $post_params) . $secret);
-
-	$post_string = implode('&', $post_params);
-	return $post_string;
+	$post_params[] = "sig=" . md5(implode('', $post_params) . $secret);
+	return implode('&', $post_params);
 }
