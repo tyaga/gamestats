@@ -6,11 +6,9 @@ $app->get('/', function() use ($app) {
 	return $app['twig']->render('index.twig');
 });
 
-$app->match('/stat/list', function() use ($app) {
-	$stats = $app['doctrine.odm.mongodb.dm']->getRepository('Documents\\Stat')->findAll();
-	foreach ($stats as $stat) {
-		var_dump($stat->getId(), $stat->getTimestamp(), $stat->getValue() );
-	}
+$app->match('/stat/list/{game_id}', function($game_id) use ($app) {
+	$stats = $app['db.stats']->find(array('game_id' => $game_id));
+	return $app->json(iterator_to_array($stats, false));
 });
 
 return $app;

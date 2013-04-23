@@ -8,9 +8,7 @@
     ],
     "require": {
 		"silex/silex": "1.0.*@dev",
-		"twig/twig": "dev-master",
-		"doctrine/mongodb-odm": "1.0.*@dev",
-		"neutron/mongo-odm-silex-provider": "0.1.1"
+		"twig/twig": "dev-master"
     },
 	"autoload": {
 		"psr-0": { "": "src/" }
