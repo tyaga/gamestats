@@ -24,7 +24,7 @@ $app->match('/stat/report/{game_id}/{slug}', function($game_id, $slug) use ($app
 			'chartType' => 'AnnotatedTimeLine',
 			'findType' => 'group',
 			'columns' => array(
-				'Timestamp' => array( 'label' => 'Timestamp', 'type' => 'datetime' ),
+				'date' => array( 'label' => 'Date', 'type' => 'datetime' ),
 				'users' => array( 'label' => 'users', 'type' => 'number' ),
 			)
 		),
@@ -47,14 +47,17 @@ $app->match('/stat/report/{game_id}/{slug}', function($game_id, $slug) use ($app
 		case 'group':
 			$keysF = new MongoCode('function(doc) {
 				var date = new Date(doc.Timestamp);
-                var dateKey = (date.getMonth()+1)+"/"+date.getDate()+"/"+date.getFullYear()+"";
+                var dateKey = date.getFullYear() + "-" + (date.getMonth()+1)+"-"+date.getDate()+"";
                 return {"date":dateKey, "user_id": doc.user_id };
 			}');
 
-			$reduceF = new MongoCode("function (obj, prev) { prev.count++; }");
+			$reduceF = new MongoCode("function (obj, prev) { prev.users++; }");
 
-			$stats = $app['db.stats']->group($keysF, array('count' => 0), $reduceF, array('condition' => $params));
-			//var_dump($stats);
+			$finF = new MongoCode("function(out){ out.date = new Date(out.date + ' 00:00:00');  }"); // out.date = {}; out.date.sec = Math.floor(date.getTime()/1000);
+
+			$stats = $app['db.stats']->group($keysF, array('users' => 0), $reduceF, array('condition' => $params, 'finalize' => $finF));
+
+			$stats = $stats['retval'];
 			break;
 	}
 
