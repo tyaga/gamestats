@@ -83,7 +83,7 @@ func main() {
 		fmt.Fprint(w, `{"res": true}`)
 	})
 
-	http.ListenAndServe(*listen_port, nil)
+	LOG(http.ListenAndServe(*listen_port, nil))
 }
 
 func prepare(chanPrepare chan *Hash, chanWrite chan *Hash) {
@@ -212,12 +212,12 @@ type Game struct {
 	Secret  string
 }
 
+type Games map[int]Game
+
 var (
 	games     Games
 	gamesLock sync.RWMutex
 )
-
-type Games map[int]Game
 
 func LoadGames() *Games {
 	gamesLock.Lock()

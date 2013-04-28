@@ -6,7 +6,7 @@ db.games.insert({name:"test3", "game_id":3, "secret":"ioyukj78j"})
  *
  * */
 define('STAT_URL', 'http://localhost:9090/stat');
-define('STAT_COUNT', 5);
+define('STAT_COUNT', 4000);
 
 $games = array(
 	1 => array(
@@ -27,15 +27,17 @@ $games = array(
 );
 
 for ($i = 0; $i < STAT_COUNT; $i++) {
-	$game = $games[array_rand($games)];
+	//$game = $games[array_rand($games)];
+	$game = $games[2];
 	$user = $game['users'][array_rand($game['users'])];
 
 	post_request(STAT_URL, array(
 		'game_id' => $game['id'],
 		'user_id' => $user,
-		'wins' => 12,
-		'level' => 3
+		'wins' => rand(2,45),
+		'level' => rand(1,5)
 	), $game['secret']);
+	sleep(1);
 }
 
 function post_request($url, $params, $secret) {
