@@ -53,7 +53,7 @@ $app->match('/stat/report/{game_id}/{slug}', function($game_id, $slug) use ($app
 
 			$reduceF = new MongoCode("function (obj, prev) { prev.users++; }");
 
-			$finF = new MongoCode("function(out){ out.date = new Date(out.date + ' 00:00:00');  }"); // out.date = {}; out.date.sec = Math.floor(date.getTime()/1000);
+			$finF = new MongoCode("function(out){ out.date = new Date(out.date + ' 00:00:00');  }");
 
 			$stats = $app['db.stats']->group($keysF, array('users' => 0), $reduceF, array('condition' => $params, 'finalize' => $finF));
 

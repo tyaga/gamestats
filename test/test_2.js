@@ -1,0 +1,1 @@
+db.stats_log.find();
